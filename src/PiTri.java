@@ -8,19 +8,13 @@
           "const main = async () => {",
           "    const api = new API(pm);",
           "    const rnd = new RandomUtils();",
-          "",
-          "    // 1. Создаем категорию",
           "    const category = await api.addCategory({",
           "        name: 'Концерты' + rnd.getRandomNumber()",
           "    });",
-          "",
-          "    // 2. Создаем пользователя",
           "    const user = await api.addUser({",
           "        name: 'Иван Иванов',",
           "        email: `ivan${rnd.getRandomNumber()}@example.com`",
           "    });",
-          "",
-          "    // 3. Создаем событие",
           "    const event = await api.addEvent(user.id, {",
           "        title: 'Рок-концерт',",
           "        annotation: 'Лучший концерт года!',",
@@ -35,17 +29,12 @@
           "        participantLimit: 0,",
           "        requestModeration: false",
           "    });",
-          "",
-          "    // 4. Публикуем событие через админа",
           "    await api.publishEvent(event.id, {",
           "        stateAction: 'PUBLISH_EVENT'",
           "    });",
-          "",
-          "    // Сохраняем переменные",
           "    pm.collectionVariables.set('uid', user.id);",
           "    pm.collectionVariables.set('eventId', event.id);",
           "}",
-          "",
           "main();"
         ]
       }
@@ -57,15 +46,13 @@
           "pm.test('Статус ответа 201', () => {",
           "    pm.response.to.have.status(201);",
           "});",
-          "",
           "pm.test('Ответ содержит корректные данные', () => {",
           "    const response = pm.response.json();",
           "    pm.expect(response).to.have.property('id');",
-          "    pm.expect(response).to.have.property('text');",
+          "    pm.expect(response).to.have.property('text'); ",
           "    pm.expect(response).to.have.property('created');",
           "    pm.expect(response.eventId).to.equal(pm.collectionVariables.get('eventId'));",
           "});",
-          "",
           "const response = pm.response.json();",
           "pm.collectionVariables.set('commentId', response.id);"
         ]
@@ -73,7 +60,7 @@
     }
   ],
   "request": {
-    "method": "POST",
+    "method": "POST", 
     "url": "{{baseUrl}}/users/{{uid}}/events/{{eventId}}/comments",
     "header": [
       {
