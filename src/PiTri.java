@@ -1,43 +1,92 @@
-public class PiTri {
-
-    public static void main(String[] args) {
-        if(args == null || args.length == 0){
-            System.out.println("Введите количество пифагоровых троек для вывода или введите три числа для проверки.");
-            return;
-        }
-        if(args.length == 1){ //вывести N троек
-            int N = Integer.parseInt(args[0]);
-            int a = 1;
-            int i = 0;
-            while (i < N && a < 1000){
-                int b = 1;
-                while (i < N && b < 1000) {
-                    int c = 1;
-                    while (i < N && c < 1000){
-                        if(checkTriple(a, b, c)){
-                            System.out.println("Числа " + a + ", " + b + ", " + c + " являются пифагоровой тройкой");
-                            i++;
-                        }
-                        c++;
-                    }
-                    b++;
-                }
-                a++;
-            }
-        } else if (args.length == 3) { //проверить три числа
-            int a = Integer.parseInt(args[0]);
-            int b = Integer.parseInt(args[1]);
-            int c = Integer.parseInt(args[2]);
-            if(checkTriple(a, b, c)){
-                System.out.println(a + ", "+ b + ", "+ c + " — это настоящая пифагорова тройка!");
-            } else {
-                System.out.println("Эти числа не являются пифагоровой тройкой");
-            }
-        }
+{
+  "name": "Create Comment Full Flow",
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [
+          "const main = async () => {",
+          "    const api = new API(pm);",
+          "    const rnd = new RandomUtils();",
+          "",
+          "    // 1. Создаем категорию",
+          "    const category = await api.addCategory({",
+          "        name: 'Концерты' + rnd.getRandomNumber()",
+          "    });",
+          "",
+          "    // 2. Создаем пользователя",
+          "    const user = await api.addUser({",
+          "        name: 'Иван Иванов',",
+          "        email: `ivan${rnd.getRandomNumber()}@example.com`",
+          "    });",
+          "",
+          "    // 3. Создаем событие",
+          "    const event = await api.addEvent(user.id, {",
+          "        title: 'Рок-концерт',",
+          "        annotation: 'Лучший концерт года!',",
+          "        description: 'Приходите, будет круто!',",
+          "        category: category.id,",
+          "        eventDate: '2025-12-31 23:59:59',",
+          "        location: {",
+          "            lat: 55.751244,",
+          "            lon: 37.618423",
+          "        },",
+          "        paid: false,",
+          "        participantLimit: 0,",
+          "        requestModeration: false",
+          "    });",
+          "",
+          "    // 4. Публикуем событие через админа",
+          "    await api.publishEvent(event.id, {",
+          "        stateAction: 'PUBLISH_EVENT'",
+          "    });",
+          "",
+          "    // Сохраняем переменные",
+          "    pm.collectionVariables.set('uid', user.id);",
+          "    pm.collectionVariables.set('eventId', event.id);",
+          "}",
+          "",
+          "main();"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "pm.test('Статус ответа 201', () => {",
+          "    pm.response.to.have.status(201);",
+          "});",
+          "",
+          "pm.test('Ответ содержит корректные данные', () => {",
+          "    const response = pm.response.json();",
+          "    pm.expect(response).to.have.property('id');",
+          "    pm.expect(response).to.have.property('text');",
+          "    pm.expect(response).to.have.property('created');",
+          "    pm.expect(response.eventId).to.equal(pm.collectionVariables.get('eventId'));",
+          "});",
+          "",
+          "const response = pm.response.json();",
+          "pm.collectionVariables.set('commentId', response.id);"
+        ]
+      }
     }
-
-    private static boolean checkTriple(int a, int b, int c) {
-        return a * a + b * b == c * c;
+  ],
+  "request": {
+    "method": "POST",
+    "url": "{{baseUrl}}/users/{{uid}}/events/{{eventId}}/comments",
+    "header": [
+      {
+        "key": "Content-Type",
+        "value": "application/json"
+      }
+    ],
+    "body": {
+      "mode": "raw",
+      "raw": {
+        "text": "Отличное событие!",
+        "eventId": "{{eventId}}"
+      }
     }
-
+  }
 }
